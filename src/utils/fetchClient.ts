@@ -31,7 +31,11 @@ function request<T>(
     .then(() => fetch(BASE_URL + url, options))
     .then(response => {
       if (!response.ok) {
-        throw new Error();
+        const errorText = response.text();
+
+        throw new Error(
+          `Request failed: ${response.status} ${response.statusText} — ${errorText}`,
+        );
       }
 
       return response.json();
