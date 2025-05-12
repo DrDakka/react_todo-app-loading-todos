@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Todo } from '../types/Todo';
-import { getTodos } from '../api/todos';
+import { method } from '../api/todos';
 
 export const useHooks = () => {
   const [todosFromServer, setTodosFromServer] = useState<Todo[]>([]);
@@ -9,7 +9,7 @@ export const useHooks = () => {
   useEffect(() => {
     const loadTodos = async () => {
       try {
-        const todosApi = await getTodos();
+        const todosApi = await method.get();
 
         setTodosFromServer(todosApi);
       } catch (e) {
