@@ -1,13 +1,22 @@
-import { Filter } from '../TodoList/TodoList';
+import { Filter } from '../../hooks/general';
+import { Todo } from '../../types/Todo';
 
 type Props = {
   filter: string;
   setFilter: React.Dispatch<React.SetStateAction<Filter>>;
-  statuses: boolean[];
+  todos: Todo[];
+  clear: (event: React.MouseEvent<HTMLButtonElement>) => Promise<void>;
 };
 
-export const Footer: React.FC<Props> = ({ filter, setFilter, statuses }) => {
-  const count = statuses.filter(s => !s).length;
+export const Footer: React.FC<Props> = ({
+  filter,
+  setFilter,
+  todos,
+  clear,
+}) => {
+  const completed = todos.filter(todo => todo.completed === true);
+  const total = todos.length;
+  const count = total - completed.length;
 
   return (
     <footer className="todoapp__footer" data-cy="Footer">
@@ -49,7 +58,8 @@ export const Footer: React.FC<Props> = ({ filter, setFilter, statuses }) => {
         type="button"
         className="todoapp__clear-completed"
         data-cy="ClearCompletedButton"
-        disabled={count === statuses.length}
+        disabled={completed.length < 1}
+        onClick={clear}
       >
         Clear completed
       </button>

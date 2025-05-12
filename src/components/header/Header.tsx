@@ -2,28 +2,54 @@ import { Todo } from '../../types/Todo';
 
 type Props = {
   todos: Todo[];
+  query: string;
+  setQuery: React.Dispatch<React.SetStateAction<string>>;
+  addTodo: () => Promise<void>;
+  disabled: boolean;
+  inputRef: React.RefObject<HTMLInputElement>;
+  patch: (event: React.MouseEvent<HTMLButtonElement>) => Promise<void>;
 };
 
-export const Header: React.FC<Props> = ({ todos }) => {
+export const Header: React.FC<Props> = ({
+  todos,
+  query,
+  setQuery,
+  addTodo,
+  disabled,
+  inputRef,
+  patch,
+}) => {
+  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    event.preventDefault();
+    setQuery(event.target.value);
+  };
+
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    await addTodo();
+  };
+
   return (
     <header className="todoapp__header">
-      <button
-        type="button"
-        className={
-          todos.some(todo => todo.completed === false)
-            ? 'todoapp__toggle-all active'
-            : 'todoapp__toggle-all'
-        }
-        data-cy="ToggleAllButton"
-      />
+      {todos.length > 0 && (
+        <button
+          type="button"
+          className={`todoapp__toggle-all${todos.every(todo => todo.completed === true) ? ' active' : ''}`}
+          data-cy="ToggleAllButton"
+          onClick={event => patch(event)}
+        />
+      )}
 
-      {/* Add a todo on form submit */}
-      <form>
+      <form onSubmit={handleSubmit}>
         <input
           data-cy="NewTodoField"
           type="text"
           className="todoapp__new-todo"
           placeholder="What needs to be done?"
+          value={query}
+          onChange={handleChange}
+          ref={inputRef}
+          disabled={disabled}
           autoFocus
         />
       </form>
